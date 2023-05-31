@@ -1,0 +1,4 @@
+﻿  Source.cpp
+C:\Users\ElRomario\source\repos\Fractions2\Fractions2\Source.cpp(72,54): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+C:\Users\ElRomario\source\repos\Fractions2\Fractions2\Source.cpp(72,38): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+  Fractions2.vcxproj -> C:\Users\ElRomario\source\repos\Fractions2\Debug\Fractions2.exe
