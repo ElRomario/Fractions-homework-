@@ -20,81 +20,107 @@ using namespace std;
 class Fraction
 {
 private:
-    double numerator;
-    double deniminator;
-    double whole;
+    int numerator;
+    int deniminator;
+    int whole;
 public:
-    Fraction(double num, double denum, double whole) : numerator{ num }, deniminator{ denum }, whole{ 0 }{};
-    Fraction(double num, double denum) : Fraction{ num, denum, 0 } {};
+    Fraction(int num, int denum, int whole) : numerator{ num }, deniminator{ denum }, whole{ 0 }{};
+    Fraction(int num, int denum) : Fraction{ num, denum, 0 } {};
     Fraction() : Fraction{ 0, 0, 0 } {};
-    void print() { cout << "whole:(" << whole << ")" << numerator << "/" << deniminator << endl; };
-    Fraction addition(Fraction frac1, Fraction frac2)
+    void print()const { cout << /*"whole:(" << whole << ")"*/  numerator << "/" << deniminator ; };
+
+    Fraction &division(Fraction & other)
     {
-        Fraction frac3;
-        if (frac1.deniminator == frac2.deniminator)
-        {
-            frac3.deniminator = frac1.deniminator;
-            frac3.numerator = frac1.numerator + frac2.numerator;
-        }
-        else
-        {
-            frac1.deniminator = frac1.deniminator * frac2.deniminator;
-            frac1.numerator = frac1.numerator * frac2.deniminator;
+        int common_denominator = deniminator * other.numerator;
+        int common_numerator = numerator * other.deniminator;
+        numerator = common_numerator;
+        deniminator = common_denominator;
+        reducter();
+        return *this;
+    }
+    Fraction &multyplying(Fraction & other)
+    {
+        int common_denominator = deniminator * other.deniminator;
+        int common_numerator = numerator * other.numerator;
+        numerator = common_numerator;
+        deniminator = common_denominator;
+        reducter();
+        return *this;
+    }
 
-            frac2.deniminator = frac2.deniminator * frac1.deniminator;
-            frac2.numerator = frac2.numerator * frac1.deniminator;
+    /*Fraction& add(const Fraction& other) { // сложение дроби с дробью
+        int common_denominator = denominator * other.denominator;
+        int common_numerator = numerator * other.denominator + other.numerator * denominator;
+        numerator = common_numerator;
+        denominator = common_denominator;
+        reduce();
+        */
+    Fraction &addition(const Fraction& other)
+    {
+        
+        int common_denominator = deniminator * other.deniminator;
+        int common_numerator = numerator * other.deniminator + other.numerator * deniminator;
+        numerator = common_numerator;
+        deniminator = common_denominator;
+        reducter();
+        return *this;
+        
 
-            frac3.numerator = frac1.numerator + frac1.numerator;
-            frac3.deniminator = frac2.deniminator;
-        }
-        reducter(frac3, frac3);
-        return frac3;
+    }
+    Fraction &subtraction(const Fraction& other)
+    {
+        int common_denominator = deniminator * other.deniminator;
+        int commomn_numerator = numerator * other.deniminator - other.numerator * deniminator;
+        numerator = commomn_numerator;
+        deniminator = common_denominator;
+        reducter();
+        return *this;
 
     }
 
 
     int gcd(int a, int b)
     {
-        while (a > 0 && b > 0)
+        while (a > 0 && b > 0 && a != b)
 
             if (a > b)
-                a %= b;
+                a -= b;
 
             else
-                b %= a;
+                b -= a;
+        if (a == b)return a;
 
-        return a + b;
     }
-    Fraction reducter(Fraction frac, Fraction &frac3)
+    void reducter()
     {
-        if (frac.deniminator > frac.numerator)
-        {
-            double divisor = gcd(frac.numerator, frac.deniminator);
-            frac3.numerator = frac.numerator / divisor;
-            frac3.deniminator = frac.deniminator / divisor;
-        }
-        else if (frac.deniminator < frac.numerator)
-        {
-            frac3.whole = frac.numerator / frac.deniminator;
-            frac3.deniminator = frac.deniminator / frac.deniminator;
+        int common_factor = gcd(numerator, deniminator);
+        numerator /= common_factor;
+        deniminator /= common_factor;
 
-        }
-        else if (frac.numerator == frac.deniminator)
-        {
-            frac3.numerator = 1;
-            frac3.deniminator = 1;
-        }
-        return Fraction(frac3.numerator, frac3.deniminator, 0);
     }
 
 };
 
 int main()
 {
+    Fraction frac1(5, 3);
+    Fraction frac2(4, 9);
 
-    Fraction frac1(8, 8);
-    Fraction frac2(8, 8);
-    Fraction frac3 = frac3.addition(frac1, frac2);
-    frac3.print();
-    //Идея: сделать делегированный конструктор с двумя параметрами без целого, сделать функцию reducer, чтобы она работала по ссылке 
+    frac1.print(); cout << " + "; frac2.print(); cout << " = ";
+    frac1.addition(frac2).print();
+    cout << endl;
+
+    frac1.print(); cout << " - "; frac2.print(); cout << " = " ;
+    frac1.subtraction(frac2).print();
+    cout << endl;
+
+    frac1.print(); cout << " * "; frac2.print(); cout << " = " ;
+    frac1.multyplying(frac2).print();
+    cout << endl;
+
+    frac1.print(); cout << " / "; frac2.print(); cout << " = " ;
+    frac1.division(frac2).print();
+    cout << endl;
+
+
 }
