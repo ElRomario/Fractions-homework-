@@ -1,18 +1,12 @@
-﻿/*Создать класс «Дробь» для представления простой дроби.
-Поля:
-■ числитель,
-■ знаменатель.
-Функции-члены: ■ конструктор принимающий числитель и знаменатель.
-В конструкторе использовать список инициализаторов полей класса.
-▷ конструктор по умолчанию, реализовать через делегирование конструктору
-с параметрами числитель и знаменатель;
-▷ вывод на экран дроби;
-▷ сложение/вычитание/умножение простой дроби с простой дробью;
-▷ сложение/вычитание/умножение простой дроби с целым числом.
-В арифметических операциях предусмотреть возможность вызова операций
-по цепочке используя указатель this.
-Предусмотреть сокращение дроби. Сокращение рекомендуется производить
-в конструкторе.*/
+﻿/*Дружественная перегрузка
+Срок: к следующему занятию, пятнице 9 июня
+
+1. Возьмите за основу класс дробей из предыдущего ДЗ. Модифицируйте его, чтобы для бинарных равноправных операторов (+, -, *, /, ==, >, < и т.п.) использовать дружественную перегрузку.
+
+2. Добавьте классу Дроби два новых оператора:
+
+• Помещения в поток вывода
+• Чтение из потока ввода*/
 
 #include <iostream> 
 
@@ -22,61 +16,22 @@ class Fraction
 private:
     int numerator;
     int deniminator;
-    int whole;
 public:
-    Fraction(int num, int denum, int whole) : numerator{ num }, deniminator{ denum }, whole{ 0 }{};
-    Fraction(int num, int denum) : Fraction{ num, denum, 0 } {};
-    Fraction() : Fraction{ 0, 0, 0 } {};
+    Fraction(int num, int denum) : numerator{ num }, deniminator{ denum }{};
+    Fraction() : Fraction{ 0, 0 } {};
     void print()const { cout << /*"whole:(" << whole << ")"*/  numerator << "/" << deniminator ; };
 
-    Fraction &division(Fraction & other)
-    {
-        int common_denominator = deniminator * other.numerator;
-        int common_numerator = numerator * other.deniminator;
-        numerator = common_numerator;
-        deniminator = common_denominator;
-        reducter();
-        return *this;
-    }
-    Fraction &multyplying(Fraction & other)
-    {
-        int common_denominator = deniminator * other.deniminator;
-        int common_numerator = numerator * other.numerator;
-        numerator = common_numerator;
-        deniminator = common_denominator;
-        reducter();
-        return *this;
-    }
+    friend Fraction operator+(const Fraction& _this, const Fraction & _that);
+    friend Fraction operator-(const Fraction& _this, const Fraction& _that);
+    friend Fraction operator*(const Fraction& _this, const Fraction& _that);
+    friend Fraction operator/(const Fraction& _this, const Fraction& _that);
 
-    /*Fraction& add(const Fraction& other) { // сложение дроби с дробью
-        int common_denominator = denominator * other.denominator;
-        int common_numerator = numerator * other.denominator + other.numerator * denominator;
-        numerator = common_numerator;
-        denominator = common_denominator;
-        reduce();
-        */
-    Fraction &addition(const Fraction& other)
-    {
-        
-        int common_denominator = deniminator * other.deniminator;
-        int common_numerator = numerator * other.deniminator + other.numerator * deniminator;
-        numerator = common_numerator;
-        deniminator = common_denominator;
-        reducter();
-        return *this;
-        
+    friend bool operator==(const Fraction& _this, const Fraction& _that);
+    friend bool operator>(const Fraction& _this, const Fraction& _that);
+    friend bool operator<(const Fraction& _this, const Fraction& _that);
 
-    }
-    Fraction &subtraction(const Fraction& other)
-    {
-        int common_denominator = deniminator * other.deniminator;
-        int commomn_numerator = numerator * other.deniminator - other.numerator * deniminator;
-        numerator = commomn_numerator;
-        deniminator = common_denominator;
-        reducter();
-        return *this;
-
-    }
+    friend ostream& operator <<(ostream& out, const Fraction &frac);
+    friend istream& operator >>(istream& in, Fraction& frac);
 
 
     int gcd(int a, int b)
@@ -101,26 +56,144 @@ public:
 
 };
 
+Fraction operator+(const Fraction& _this, const Fraction& _that)
+{
+    Fraction frac3;
+    int common_denominator = _this.deniminator * _that.deniminator;
+    int common_numerator = _this.numerator * _that.deniminator + _that.numerator * _this.deniminator;
+    frac3.numerator = common_numerator;
+    frac3.deniminator = common_denominator;
+    frac3.reducter();
+    return frac3;
+}
+
+Fraction operator-(const Fraction& _this, const Fraction& _that)
+{
+    Fraction frac3;
+    int common_denominator = _this.deniminator * _that.deniminator;
+    int common_numerator = _this.numerator * _that.deniminator - _that.numerator * _this.deniminator;
+    frac3.numerator = common_numerator;
+    frac3.deniminator = common_denominator;
+    frac3.reducter();
+    return frac3;
+}
+
+Fraction operator*(const Fraction& _this, const Fraction& _that)
+{
+    Fraction frac3;
+    int common_denominator = _this.deniminator * _that.deniminator;
+    int common_numerator = _this.numerator * _that.numerator;
+    frac3.numerator = common_numerator;
+    frac3.deniminator = common_denominator;
+    frac3.reducter();
+    return frac3;
+}
+
+Fraction operator/(const Fraction& _this, const Fraction& _that)
+{
+    Fraction frac3;
+    int common_denominator = _this.deniminator * _that.numerator;
+    int common_numerator = _this.numerator * _that.deniminator;
+    frac3.numerator = common_numerator;
+    frac3.deniminator = common_denominator;
+    frac3.reducter();
+    return frac3;
+}
+
+bool operator==(const Fraction& _this, const Fraction& _that)
+{
+    if (_this.numerator == _that.deniminator && _this.numerator == _that.deniminator)
+        return true;
+    else { return false; }
+}
+
+bool operator>(const Fraction& _this, const Fraction& _that)
+{
+    Fraction fracThis, fracThat;
+    int common_denominator = _this.deniminator * _that.deniminator;
+    fracThis.deniminator = common_denominator;
+    fracThat.deniminator = common_denominator;
+
+    fracThis.numerator = _this.numerator * _that.deniminator;
+    fracThat.numerator = _that.numerator * _this.deniminator;
+
+    if (fracThis.numerator > fracThat.numerator) return true;
+    else { return false; };
+
+
+}
+
+bool operator<(const Fraction& _this, const Fraction& _that)
+{
+    Fraction fracThis, fracThat;
+    int common_denominator = _this.deniminator * _that.deniminator;
+    fracThis.deniminator = common_denominator;
+    fracThat.deniminator = common_denominator;
+
+    fracThis.numerator = _this.numerator * _that.deniminator;
+    fracThat.numerator = _that.numerator * _this.deniminator;
+
+    if (fracThis.numerator < fracThat.numerator) return true;
+    else { return false; };
+}
+
+ostream& operator <<(ostream& out, const Fraction& frac)
+{
+    out << frac.numerator << " / " << frac.deniminator;
+    return out;
+}
+
+istream& operator>>(istream& in, Fraction& frac)
+{
+    cout << "Enter numerator: ";
+    in >> frac.numerator;
+    cout << "Enter denominator: ";
+    in >> frac.deniminator;
+
+    return in;
+}
+
+
 int main()
 {
     Fraction frac1(5, 3);
     Fraction frac2(4, 9);
+    Fraction frac3;
 
-    frac1.print(); cout << " + "; frac2.print(); cout << " = ";
-    frac1.addition(frac2).print();
+
+    cout << frac1 << " - " << frac2 << " = " << frac1 - frac2;
     cout << endl;
 
-    frac1.print(); cout << " - "; frac2.print(); cout << " = " ;
-    frac1.subtraction(frac2).print();
+    cout << frac1 << " + " << frac2 <<" = " << frac1 + frac2;
     cout << endl;
 
-    frac1.print(); cout << " * "; frac2.print(); cout << " = " ;
-    frac1.multyplying(frac2).print();
+    cin >> frac3;
+    cout << frac3;
     cout << endl;
 
-    frac1.print(); cout << " / "; frac2.print(); cout << " = " ;
-    frac1.division(frac2).print();
+    if (frac1 > frac2) cout << frac1 << " > " << frac2;
+    else
+    {
+        cout << frac1 << "!> " << frac2;
+    }
     cout << endl;
+
+    if (frac3 < frac2) cout << frac3 << " < " << frac2;
+    else
+    {
+        cout << frac3 << "!< " << frac2;
+    }
+    cout << endl;
+
+    Fraction frac4;
+    cin >> frac4;
+    cout << endl;
+
+    if (frac1 == frac2) cout << frac1 << " == " << frac2;
+    else
+    {
+        cout << frac1 << "!== " << frac2;
+    }
 
 
 }
